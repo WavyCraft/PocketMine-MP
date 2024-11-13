@@ -80,7 +80,6 @@ final class Promise{
 			$resolver->resolve([]);
 			return $resolver->getPromise();
 		}
-
 		$values = [];
 		$toResolve = count($promises);
 		$continue = true;
