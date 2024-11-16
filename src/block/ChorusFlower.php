@@ -54,7 +54,7 @@ final class ChorusFlower extends Flowable{
 	}
 
 	private function canBeSupportedAt(Block $block) : bool{
-		$position = $block->getPosition();
+		$position = $block->position;
 		$world = $position->getWorld();
 		$down = $world->getBlock($position->down());
 
@@ -82,8 +82,6 @@ final class ChorusFlower extends Flowable{
 	public function onProjectileHit(Projectile $projectile, RayTraceResult $hitResult) : void{
 		$this->position->getWorld()->useBreakOn($this->position);
 	}
-
-	public function ticksRandomly() : bool{ return $this->age < self::MAX_AGE; }
 
 	/**
 	 * @phpstan-return array{int, bool}
@@ -154,10 +152,12 @@ final class ChorusFlower extends Flowable{
 		if($tx === null){
 			$tx = new BlockTransaction($this->position->getWorld());
 		}
-		$tx->addBlock($this->position->getSide($facing), (clone $this)->setAge(min(self::MAX_AGE, $this->getAge() + $ageChange)));
+		$tx->addBlock($this->position->getSide($facing), (clone $this)->setAge(min(self::MAX_AGE, $this->age + $ageChange)));
 
 		return $tx;
 	}
+
+	public function ticksRandomly() : bool{ return $this->age < self::MAX_AGE; }
 
 	public function onRandomTick() : void{
 		$world = $this->position->getWorld();

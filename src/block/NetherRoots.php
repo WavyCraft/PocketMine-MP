@@ -21,19 +21,20 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\data\bedrock\block\upgrade;
+namespace pocketmine\block;
 
-final class BlockStateUpgradeSchemaFlattenedName{
+use pocketmine\block\utils\StaticSupportTrait;
+use pocketmine\math\Facing;
 
-	public function __construct(
-		public string $prefix,
-		public string $flattenedProperty,
-		public string $suffix
-	){}
+final class NetherRoots extends Flowable{
+	use StaticSupportTrait;
 
-	public function equals(self $that) : bool{
-		return $this->prefix === $that->prefix &&
-			$this->flattenedProperty === $that->flattenedProperty &&
-			$this->suffix === $that->suffix;
+	private function canBeSupportedAt(Block $block) : bool{
+		//TODO: nylium, moss
+		$supportBlock = $block->getSide(Facing::DOWN);
+		return
+			$supportBlock->hasTypeTag(BlockTypeTags::DIRT) ||
+			$supportBlock->hasTypeTag(BlockTypeTags::MUD) ||
+			$supportBlock->getTypeId() === BlockTypeIds::SOUL_SOIL;
 	}
 }

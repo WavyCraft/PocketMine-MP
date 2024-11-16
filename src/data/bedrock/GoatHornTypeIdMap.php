@@ -23,16 +23,26 @@ declare(strict_types=1);
 
 namespace pocketmine\data\bedrock;
 
-use PHPUnit\Framework\TestCase;
-use pocketmine\block\utils\DyeColor;
+use pocketmine\item\GoatHornType;
+use pocketmine\utils\SingletonTrait;
 
-class DyeColorIdMapTest extends TestCase{
+final class GoatHornTypeIdMap{
+	use SingletonTrait;
+	/** @phpstan-use IntSaveIdMapTrait<GoatHornType> */
+	use IntSaveIdMapTrait;
 
-	public function testAllColorsMapped() : void{
-		foreach(DyeColor::cases() as $color){
-			$id = DyeColorIdMap::getInstance()->toId($color);
-			$color2 = DyeColorIdMap::getInstance()->fromId($id);
-			self::assertTrue($color === $color2);
+	private function __construct(){
+		foreach(GoatHornType::cases() as $case){
+			$this->register(match($case){
+				GoatHornType::PONDER => GoatHornTypeIds::PONDER,
+				GoatHornType::SING => GoatHornTypeIds::SING,
+				GoatHornType::SEEK => GoatHornTypeIds::SEEK,
+				GoatHornType::FEEL => GoatHornTypeIds::FEEL,
+				GoatHornType::ADMIRE => GoatHornTypeIds::ADMIRE,
+				GoatHornType::CALL => GoatHornTypeIds::CALL,
+				GoatHornType::YEARN => GoatHornTypeIds::YEARN,
+				GoatHornType::DREAM => GoatHornTypeIds::DREAM
+			}, $case);
 		}
 	}
 }

@@ -59,10 +59,6 @@ class NetherVines extends Flowable{
 		return true;
 	}
 
-	public function ticksRandomly() : bool{
-		return true;
-	}
-
 	public function canClimb() : bool{
 		return true;
 	}
@@ -98,8 +94,12 @@ class NetherVines extends Flowable{
 		return false;
 	}
 
+	public function ticksRandomly() : bool{
+		return $this->age < self::MAX_AGE;
+	}
+
 	public function onRandomTick() : void{
-		if(mt_rand(1, 10) === 1 && $this->age < self::MAX_AGE){
+		if($this->age < self::MAX_AGE && mt_rand(1, 10) === 1){
 			if($this->getSide($this->growthFace)->canBeReplaced()){
 				$this->grow(null);
 			}
@@ -108,8 +108,8 @@ class NetherVines extends Flowable{
 
 	private function grow(?Player $player, int $growthAmount = 1) : bool{
 		$top = $this->seekToTip();
-		$age = $top->getAge();
-		$pos = $top->getPosition();
+		$age = $top->age;
+		$pos = $top->position;
 		$world = $pos->getWorld();
 		$changedBlocks = 0;
 

@@ -25,6 +25,7 @@ namespace pocketmine\block;
 
 use pocketmine\block\utils\AgeableTrait;
 use pocketmine\block\utils\BlockEventHelper;
+use pocketmine\block\utils\CropGrowthHelper;
 use pocketmine\block\utils\StaticSupportTrait;
 use pocketmine\item\Fertilizer;
 use pocketmine\item\Item;
@@ -62,11 +63,11 @@ abstract class Crops extends Flowable{
 	}
 
 	public function ticksRandomly() : bool{
-		return true;
+		return $this->age < self::MAX_AGE;
 	}
 
 	public function onRandomTick() : void{
-		if($this->age < self::MAX_AGE && mt_rand(0, 2) === 1){
+		if($this->age < self::MAX_AGE && CropGrowthHelper::canGrow($this)){
 			$block = clone $this;
 			++$block->age;
 			BlockEventHelper::grow($this, $block, null);
