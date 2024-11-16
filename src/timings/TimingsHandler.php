@@ -51,19 +51,30 @@ class TimingsHandler{
 	private static ?ObjectSet $collectCallbacks = null;
 
 	/**
+	 * @phpstan-template T of object
+	 * @phpstan-param ?ObjectSet<T> $where
+	 * @phpstan-param-out ObjectSet<T> $where
+	 * @phpstan-return ObjectSet<T>
+	 */
+	private static function lazyGetSet(?ObjectSet &$where) : ObjectSet{
+		//workaround for phpstan bug - allows us to ignore 1 error instead of 6 without suppressing other errors
+		return $where ??= new ObjectSet();
+	}
+
+	/**
 	 * @phpstan-return ObjectSet<\Closure(bool $enable) : void>
 	 */
-	public static function getToggleCallbacks() : ObjectSet{ return self::$toggleCallbacks ??= new ObjectSet(); }
+	public static function getToggleCallbacks() : ObjectSet{ return self::lazyGetSet(self::$toggleCallbacks); }
 
 	/**
 	 * @phpstan-return ObjectSet<\Closure() : void>
 	 */
-	public static function getReloadCallbacks() : ObjectSet{ return self::$reloadCallbacks ??= new ObjectSet(); }
+	public static function getReloadCallbacks() : ObjectSet{ return self::lazyGetSet(self::$reloadCallbacks); }
 
 	/**
 	 * @phpstan-return ObjectSet<\Closure() : list<CollectPromise>>
 	 */
-	public static function getCollectCallbacks() : ObjectSet{ return self::$collectCallbacks ??= new ObjectSet(); }
+	public static function getCollectCallbacks() : ObjectSet{ return self::lazyGetSet(self::$collectCallbacks); }
 
 	/**
 	 * @return string[]
