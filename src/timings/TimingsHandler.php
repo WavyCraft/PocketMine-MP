@@ -46,7 +46,7 @@ class TimingsHandler{
 	/** @phpstan-var ObjectSet<\Closure(bool $enable) : void> */
 	private static ?ObjectSet $toggleCallbacks = null;
 	/** @phpstan-var ObjectSet<\Closure() : void> */
-	private static ?ObjectSet $resetCallbacks = null;
+	private static ?ObjectSet $reloadCallbacks = null;
 	/** @phpstan-var ObjectSet<\Closure() : list<CollectPromise>> */
 	private static ?ObjectSet $collectCallbacks = null;
 
@@ -58,7 +58,7 @@ class TimingsHandler{
 	/**
 	 * @phpstan-return ObjectSet<\Closure() : void>
 	 */
-	public static function getResetCallbacks() : ObjectSet{ return self::$resetCallbacks ??= new ObjectSet(); }
+	public static function getReloadCallbacks() : ObjectSet{ return self::$reloadCallbacks ??= new ObjectSet(); }
 
 	/**
 	 * @phpstan-return ObjectSet<\Closure() : list<CollectPromise>>
@@ -200,8 +200,8 @@ class TimingsHandler{
 
 	public static function reload() : void{
 		self::internalReload();
-		if(self::$resetCallbacks !== null){
-			foreach(self::$resetCallbacks as $callback){
+		if(self::$reloadCallbacks !== null){
+			foreach(self::$reloadCallbacks as $callback){
 				$callback();
 			}
 		}

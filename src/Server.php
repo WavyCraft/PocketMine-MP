@@ -899,17 +899,17 @@ class Server{
 			$this->asyncPool = new AsyncPool($poolSize, max(-1, $this->configGroup->getPropertyInt(Yml::MEMORY_ASYNC_WORKER_HARD_LIMIT, 256)), $this->autoloader, $this->logger, $this->tickSleeper);
 			$this->asyncPool->addWorkerStartHook(function(int $i) : void{
 				if(TimingsHandler::isEnabled()){
-					$this->asyncPool->submitTaskToWorker(new TimingsControlTask(TimingsControlTask::ENABLE), $i);
+					$this->asyncPool->submitTaskToWorker(TimingsControlTask::setEnabled(true), $i);
 				}
 			});
 			TimingsHandler::getToggleCallbacks()->add(function(bool $enable) : void{
 				foreach($this->asyncPool->getRunningWorkers() as $workerId){
-					$this->asyncPool->submitTaskToWorker(new TimingsControlTask($enable ? TimingsControlTask::ENABLE : TimingsControlTask::DISABLE), $workerId);
+					$this->asyncPool->submitTaskToWorker(TimingsControlTask::setEnabled($enable), $workerId);
 				}
 			});
-			TimingsHandler::getResetCallbacks()->add(function() : void{
+			TimingsHandler::getReloadCallbacks()->add(function() : void{
 				foreach($this->asyncPool->getRunningWorkers() as $workerId){
-					$this->asyncPool->submitTaskToWorker(new TimingsControlTask(TimingsControlTask::RESET), $workerId);
+					$this->asyncPool->submitTaskToWorker(TimingsControlTask::reload(), $workerId);
 				}
 			});
 			TimingsHandler::getCollectCallbacks()->add(function() : array{

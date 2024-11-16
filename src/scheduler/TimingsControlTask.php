@@ -27,13 +27,21 @@ use pocketmine\timings\TimingsHandler;
 
 final class TimingsControlTask extends AsyncTask{
 
-	public const ENABLE = 1;
-	public const DISABLE = 2;
-	public const RESET = 3;
+	private const ENABLE = 1;
+	private const DISABLE = 2;
+	private const RELOAD = 3;
 
-	public function __construct(
+	private function __construct(
 		private int $operation
 	){}
+
+	public static function setEnabled(bool $enable) : self{
+		return new self($enable ? self::ENABLE : self::DISABLE);
+	}
+
+	public static function reload() : self{
+		return new self(self::RELOAD);
+	}
 
 	public function onRun() : void{
 		if($this->operation === self::ENABLE){
@@ -42,7 +50,7 @@ final class TimingsControlTask extends AsyncTask{
 		}elseif($this->operation === self::DISABLE){
 			TimingsHandler::setEnabled(false);
 			\GlobalLogger::get()->debug("Disabled timings");
-		}elseif($this->operation === self::RESET){
+		}elseif($this->operation === self::RELOAD){
 			TimingsHandler::reload();
 			\GlobalLogger::get()->debug("Reset timings");
 		}else{
