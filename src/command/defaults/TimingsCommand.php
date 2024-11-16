@@ -102,8 +102,7 @@ class TimingsCommand extends VanillaCommand{
 			Command::broadcastCommandMessage($sender, KnownTranslationFactory::pocketmine_command_timings_reset());
 		}elseif($mode === "merged" || $mode === "report" || $paste){
 			$timingsPromise = TimingsHandler::requestPrintTimings();
-			//TODO: i18n
-			Command::broadcastCommandMessage($sender, "Compiling timings report");
+			Command::broadcastCommandMessage($sender, KnownTranslationFactory::pocketmine_command_timings_collect());
 			$timingsPromise->onCompletion(
 				fn(array $lines) => $paste ? $this->uploadReport($lines, $sender) : $this->createReportFile($lines, $sender),
 				fn() => throw new AssumptionFailedError("This promise is not expected to be rejected")
