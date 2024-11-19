@@ -21,20 +21,15 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\data\bedrock\block\upgrade\model;
+namespace pocketmine\data\bedrock;
 
-final class BlockStateUpgradeSchemaModelFlattenedName{
-
-	/** @required */
-	public string $prefix;
-	/** @required */
-	public string $flattenedProperty;
-	/** @required */
-	public string $suffix;
-
-	public function __construct(string $prefix, string $flattenedProperty, string $suffix){
-		$this->prefix = $prefix;
-		$this->flattenedProperty = $flattenedProperty;
-		$this->suffix = $suffix;
-	}
+final class GoatHornTypeIds{
+	public const PONDER = 0;
+	public const SING = 1;
+	public const SEEK = 2;
+	public const FEEL = 3;
+	public const ADMIRE = 4;
+	public const CALL = 5;
+	public const YEARN = 6;
+	public const DREAM = 7;
 }
