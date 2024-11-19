@@ -63,7 +63,17 @@ abstract class TextFormat{
 	public const YELLOW = TextFormat::ESCAPE . "e";
 	public const WHITE = TextFormat::ESCAPE . "f";
 	public const MINECOIN_GOLD = TextFormat::ESCAPE . "g";
-
+	public const MATERIAL_QUARTZ = TextFormat::ESCAPE . "h";
+	public const MATERIAL_IRON = TextFormat::ESCAPE . "i";
+	public const MATERIAL_NETHERITE = TextFormat::ESCAPE . "j";
+	public const MATERIAL_REDSTONE = TextFormat::ESCAPE . "m";
+	public const MATERIAL_COPPER = TextFormat::ESCAPE . "n";
+	public const MATERIAL_GOLD = TextFormat::ESCAPE . "p";
+	public const MATERIAL_EMERALD = TextFormat::ESCAPE . "q";
+	public const MATERIAL_DIAMOND = TextFormat::ESCAPE . "s";
+	public const MATERIAL_LAPIS = TextFormat::ESCAPE . "t";
+	public const MATERIAL_AMETHYST = TextFormat::ESCAPE . "u";
+	
 	public const COLORS = [
 		self::BLACK => self::BLACK,
 		self::DARK_BLUE => self::DARK_BLUE,
@@ -82,19 +92,25 @@ abstract class TextFormat{
 		self::YELLOW => self::YELLOW,
 		self::WHITE => self::WHITE,
 		self::MINECOIN_GOLD => self::MINECOIN_GOLD,
+	    self::MATERIAL_QUARTZ => self::MATERIAL_QUARTZ,
+	    self::MATERIAL_IRON => self::MATERIAL_IRON,
+	    self::MATERIAL_NETHERITE => self::MATERIAL_NETHERITE,
+	    self::MATERIAL_REDSTONE => self::MATERIAL_REDSTONE,
+	    self::MATERIAL_COPPER => self::MATERIAL_COPPER,
+	    self::MATERIAL_GOLD => self::MATERIAL_GOLD,
+	    self::MATERIAL_EMERALD => self::MATERIAL_EMERALD,
+	    self::MATERIAL_DIAMOND => self::MATERIAL_DIAMOND,
+	    self::MATERIAL_LAPIS => self::MATERIAL_LAPIS,
+	    self::MATERIAL_AMETHYST => self::MATERIAL_AMETHYST,
 	];
 
 	public const OBFUSCATED = TextFormat::ESCAPE . "k";
 	public const BOLD = TextFormat::ESCAPE . "l";
-	public const STRIKETHROUGH = TextFormat::ESCAPE . "m";
-	public const UNDERLINE = TextFormat::ESCAPE . "n";
 	public const ITALIC = TextFormat::ESCAPE . "o";
 
 	public const FORMATS = [
 		self::OBFUSCATED => self::OBFUSCATED,
 		self::BOLD => self::BOLD,
-		self::STRIKETHROUGH => self::STRIKETHROUGH,
-		self::UNDERLINE => self::UNDERLINE,
 		self::ITALIC => self::ITALIC,
 	];
 
