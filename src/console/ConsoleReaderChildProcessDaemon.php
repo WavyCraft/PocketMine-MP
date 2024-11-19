@@ -31,11 +31,12 @@ use function count;
 use function explode;
 use function fgets;
 use function fopen;
+use function hash;
+use function mt_rand;
 use function preg_replace;
 use function proc_close;
 use function proc_open;
 use function proc_terminate;
-use function random_bytes;
 use function rtrim;
 use function sprintf;
 use function stream_select;
@@ -62,26 +63,26 @@ final class ConsoleReaderChildProcessDaemon{
 	private $subprocess;
 	/** @var resource */
 	private $socket;
-	private string $commandPrefix;
+	private int $commandTokenSeed;
 
 	public function __construct(
 		\Logger $logger
 	){
 		$this->logger = new \PrefixedLogger($logger, "Console Reader Daemon");
+		$this->commandTokenSeed = mt_rand();
 		$this->prepareSubprocess();
 	}
 
 	private function prepareSubprocess() : void{
 		//Windows sucks, and likes to corrupt UTF-8 file paths when they travel to the subprocess, so we base64 encode
 		//the path to avoid the problem. This is an abysmally shitty hack, but here we are :(
-		$this->commandPrefix = rtrim(base64_encode(random_bytes(8)), '=');
 		$sub = Utils::assumeNotFalse(proc_open(
 			[
 				PHP_BINARY,
 				'-dopcache.enable_cli=0',
 				'-r',
 				sprintf('require base64_decode("%s", true);', base64_encode(Path::join(__DIR__, 'ConsoleReaderChildProcess.php'))),
-				$this->commandPrefix
+				(string) $this->commandTokenSeed
 			],
 			[
 				1 => ['socket'],
@@ -114,15 +115,30 @@ final class ConsoleReaderChildProcessDaemon{
 				$this->prepareSubprocess();
 				return null;
 			}
+			$line = rtrim($line, "\n");
 
-			$parts = explode(":", $line, 2);
-			if(count($parts) !== 2 || $parts[0] !== $this->commandPrefix){
-				//this is not a command - it may be some kind of error output from the subprocess
-				//write it directly to the console
-				echo $line;
+			if($line === ""){
+				//keepalive
 				return null;
 			}
-			$command = $parts[1];
+
+			$command = null;
+
+			$parts = explode(":", $line, 2);
+			if(count($parts) === 2){
+				$expectedToken = hash('xxh3', $parts[0], options: ['seed' => $this->commandTokenSeed]);
+
+				if($expectedToken === $parts[1]){
+					$command = $parts[0];
+					$this->commandTokenSeed++;
+				}
+			}
+			if($command === null){
+				//this is not a command - it may be some kind of error output from the subprocess
+				//write it directly to the console
+				$this->logger->warning("Unexpected output from child process: $line");
+				return null;
+			}
 
 			$command = preg_replace("#\\x1b\\x5b([^\\x1b]*\\x7e|[\\x40-\\x50])#", "", trim($command)) ?? throw new AssumptionFailedError("This regex is assumed to be valid");
 			$command = preg_replace('/[[:cntrl:]]/', '', $command) ?? throw new AssumptionFailedError("This regex is assumed to be valid");

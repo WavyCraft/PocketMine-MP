@@ -30,18 +30,17 @@ use function cli_set_process_title;
 use function count;
 use function dirname;
 use function fwrite;
-use function ini_set;
+use function hash;
+use function is_numeric;
 use const PHP_EOL;
 use const STDOUT;
 
-ini_set('display_errors', 'stderr');
-
-if(count($argv) !== 2){
-	echo "Usage: " . $argv[0] . " <command prefix token>" . PHP_EOL;
+if(count($argv) !== 2 || !is_numeric($argv[1])){
+	echo "Usage: " . $argv[0] . " <command token seed>" . PHP_EOL;
 	exit(1);
 }
 
-$commandToken = $argv[1];
+$commandTokenSeed = (int) $argv[1];
 
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
 
@@ -80,11 +79,16 @@ while(true){
 		if(count($channel) === 0){
 			$channel->wait(1_000_000);
 		}
-		$line = $channel->shift();
-		return $line;
+		return $channel->shift();
 	});
-	$line ??= "";
-	if(@fwrite(STDOUT, $commandToken . ":" . $line . "\n") === false){
+	if($line !== null){
+		$commandToken = hash('xxh3', $line, options: ['seed' => $commandTokenSeed]);
+		$commandTokenSeed++;
+		$message = $line . ":" . $commandToken;
+	}else{
+		$message = "";
+	}
+	if(@fwrite(STDOUT, $message . "\n") === false){
 		//Always send even if there's no line, to check if the parent is alive
 		//If the parent process was terminated forcibly, it won't close the connection properly, so feof() will return
 		//false even though the connection is actually broken. However, fwrite() will fail.
