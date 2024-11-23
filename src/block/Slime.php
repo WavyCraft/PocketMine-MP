@@ -40,5 +40,8 @@ final class Slime extends Transparent{
 		return -$entity->getMotion()->y;
 	}
 
-	//TODO: slime blocks should slow entities walking on them to about 0.4x original speed
+	public function onEntityWalking(Entity $entity) : void{
+        $motion = $entity->getMotion();
+        $entity->setMotion($motion->multiply(0.4));
+    }
 }
