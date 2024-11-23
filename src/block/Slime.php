@@ -48,10 +48,13 @@ final class Slime extends Transparent{
     }
 
     public function setSpeedMultiplier(float $multiplier) : void{
+        if ($multiplier < 0) {
+            throw new \InvalidArgumentException("Speed multiplier cannot be negative: $multiplier");
+        }
         $this->speedMultiplier = $multiplier;
     }
 
-    public function getSpeedMultiplier() : float{
+    public function getSpeedMultiplier() : float {
         return $this->speedMultiplier;
     }
 }
