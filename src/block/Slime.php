@@ -28,6 +28,8 @@ use pocketmine\entity\Living;
 
 final class Slime extends Transparent{
 
+	private float $speedMultiplier = 0.4;
+
 	public function getFrictionFactor() : float{
 		return 0.8; //???
 	}
@@ -40,5 +42,16 @@ final class Slime extends Transparent{
 		return -$entity->getMotion()->y;
 	}
 
-	//TODO: slime blocks should slow entities walking on them to about 0.4x original speed
+	public function onEntityWalking(Entity $entity) : void{
+        $motion = $entity->getMotion();
+        $entity->setMotion($motion->multiply($this->speedMultiplier));
+    }
+
+    public function setSpeedMultiplier(float $multiplier) : void{
+        $this->speedMultiplier = $multiplier;
+    }
+
+    public function getSpeedMultiplier() : float{
+        return $this->speedMultiplier;
+    }
 }
